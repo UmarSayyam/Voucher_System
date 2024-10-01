@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUserModel
-        fields = ('email', 'password', 'first_name', 'last_name', 'company_name', 'phone_number', 'country', 'state', 'city', 'website_link')
+        fields = ('id', 'email', 'password', 'first_name', 'last_name', 'company_name', 'phone_number', 'country', 'state', 'city', 'website_link')
 
     def validate(self, attrs):
         email = attrs.get('email', '').strip().lower()
