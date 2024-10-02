@@ -11,4 +11,6 @@ urlpatterns = [
     #timeslot ka liye
     path('voucher-availabilities/<int:voucher_availability_id>/time-slots/', views.TimeSlotListCreateView.as_view(), name='time-slot-list-create'),
     path('time-slots/<int:pk>/', views.TimeSlotDetailView.as_view(), name='time-slot-detail'),
+    #for all in one
+    path('voucher/create-nested/', views.VoucherNestedCreateView.as_view(), name='voucher-nested-create'),
 ]

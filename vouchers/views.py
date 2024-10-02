@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Voucher, VoucherAvailability, TimeSlot
-from .serializers import VoucherSerializer, VoucherAvailabilitySerializer, TimeSlotSerializer 
+from .serializers import VoucherSerializer, VoucherAvailabilitySerializer, TimeSlotSerializer, VoucherCreateSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -58,6 +58,11 @@ class TimeSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-    
+
 # make a new api (class)
 # which will inherit both of above classes than add its url to urls.py
+
+
+class VoucherNestedCreateView(generics.CreateAPIView):
+    queryset = Voucher.objects.all()
+    serializer_class = VoucherCreateSerializer
