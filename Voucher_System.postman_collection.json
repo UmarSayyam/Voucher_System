@@ -1,0 +1,434 @@
+{
+	"info": {
+		"_postman_id": "15b6768e-d316-4d57-b59b-f9e21d62a988",
+		"name": "Voucher_System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38091277"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"umar12@umar.com\",\r\n    \"password\": \"umar\",\r\n    \"first_name\": \"umar\",\r\n    \"last_name\": \"umar\",\r\n    \"company_name\": \"umar\",\r\n    \"phone_number\": \"1122\",\r\n    \"country\": \"umar\",\r\n    \"state\": \"umar\",\r\n    \"city\": \"umar\",\r\n    \"website_link\": \"https://google.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/auth/register/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"umar12@umar.com\",\r\n    \"password\": \"umar\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/auth/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNzg3Mzg2NiwiaWF0IjoxNzI3Nzg3NDY2LCJqdGkiOiIxMzNlMTNhNDNjZTg0YmM2OTcyMzc4ZjI3YWU2ZWVmYiIsInVzZXJfaWQiOjE1fQ.OMiEAWMqzlvkKlUG7rrRpRvV9h8BwzBj9x8XmMUPrmA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/auth/logout/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "vouchers",
+			"item": [
+				{
+					"name": "voucher_availability",
+					"item": [
+						{
+							"name": "Create Voucher Availability",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucher\": \"3\",\r\n    \"day_of_week\": \"monday\",\r\n    \"start_time\": \"09:00:00\",\r\n    \"end_time\": \"18:00:00\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/3/availabilities/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										"3",
+										"availabilities",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Voucher Availabilities",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/2/availabilities/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										"2",
+										"availabilities",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Voucher Availability",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"voucher\": \"2\",\r\n    \"day_of_week\": \"tuesday\",\r\n    \"start_time\": \"08:00:00\",\r\n    \"end_time\": \"17:00:00\"\r\n    \r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/availabilities/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"availabilities",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Voucher Availability",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/availabilities/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"availabilities",
+										"2",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CRUD",
+					"item": [
+						{
+							"name": "create_voucher",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Summer Discount\",\r\n    \"description\": \"Discount for summer items\",\r\n    \"voucher_code\": \"SUMMER2024\",\r\n    \"discount_type\": \"percentage\",\r\n    \"discount_value\": 10.00,\r\n    \"start_date\": \"2024-06-01\",\r\n    \"end_date\": \"2024-09-01\",\r\n    \"minimum_spending\": 20.00,\r\n    \"maximum_spending\": 100.00,\r\n    \"birthday_members_only\": false,\r\n    \"standalone_voucher\": true,\r\n    \"apply_on_all_items\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "voucher_retrieve",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update_voucher",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Autumn Discount\",\r\n    \"description\": \"Discount for autumn items\",\r\n    \"voucher_code\": \"AUTUMN2024\",\r\n    \"discount_type\": \"fixed\",\r\n    \"discount_value\": 5.00,\r\n    \"start_date\": \"2024-10-01\",\r\n    \"end_date\": \"2024-11-30\",\r\n    \"minimum_spending\": 30.00,\r\n    \"maximum_spending\": 150.00,\r\n    \"birthday_members_only\": true,\r\n    \"standalone_voucher\": false,\r\n    \"apply_on_all_items\": false\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_voucher",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/2/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										"2",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "voucher_retrieve_single",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/auth/vouchers/1/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"vouchers",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxOTg2OTg0NzM0LCJpYXQiOjE3Mjc3ODQ3MzQsImp0aSI6IjAzYzUyYzA0YzM5ZjRhMWZiNGY0OGI5MzY5OTcyZWQzIiwidXNlcl9pZCI6MTV9.uToz0NMjSxLKsGRHxcgw3SSOvcTrouoIZC2R4Y_wx5I",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

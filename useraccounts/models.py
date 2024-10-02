@@ -27,8 +27,8 @@ class UserManager(BaseUserManager):
 class CustomUserModel(AbstractBaseUser):
 
     email = models.EmailField(max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=255)           # this is not optional
+    last_name = models.CharField(max_length=255, null=True, blank=True)    # this is optional 
     company_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=50)
     country = models.CharField(max_length=100)
@@ -39,7 +39,7 @@ class CustomUserModel(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    website_link = models.URLField(max_length=200, null=True, blank=True)
+    # website_link = models.URLField(max_length=200, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
 
