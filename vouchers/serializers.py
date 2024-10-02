@@ -4,15 +4,12 @@ from .models import Voucher, VoucherAvailability, TimeSlot
 class VoucherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Voucher
-        fields = '__all__'
-
-# class VoucherAvailabilitySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = VoucherAvailability
-#         fields = ['day_of_week', 'time_slots']
-
-
-
+        fields = [
+            'id', 
+            'name', 'description', 'voucher_code', 'discount_type', 'discount_value',
+            'start_date', 'end_date', 'minimum_spending', 'maximum_usability_of_voucher',
+            'birthday_members_only' 
+        ]
 
 class TimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,13 +19,11 @@ class TimeSlotSerializer(serializers.ModelSerializer):
 
 
 class VoucherAvailabilitySerializer(serializers.ModelSerializer):
-    # Use the TimeSlotSerializer for the nested time_slots field
     time_slots = TimeSlotSerializer(many=True, required=False)
 
     class Meta:
         model = VoucherAvailability
-        fields = ['day_of_week', 'time_slots']
-
+        fields = ['id', 'day_of_week', 'time_slots']
 
 
 class VoucherCreateSerializer(serializers.ModelSerializer):
@@ -37,6 +32,7 @@ class VoucherCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Voucher
         fields = [
+            'id',
             'name', 'description', 'voucher_code', 'discount_type', 'discount_value',
             'start_date', 'end_date', 'minimum_spending', 'maximum_usability_of_voucher',
             'birthday_members_only', 'availabilities'
@@ -46,7 +42,6 @@ class VoucherCreateSerializer(serializers.ModelSerializer):
         availabilities_data = validated_data.pop('availabilities')
         voucher = Voucher.objects.create(**validated_data)
 
-        # Loop over the availabilities and time slots and create them
         for availability_data in availabilities_data:
             time_slots_data = availability_data.pop('time_slots')
             availability = VoucherAvailability.objects.create(voucher=voucher, **availability_data)

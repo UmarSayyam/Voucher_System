@@ -147,7 +147,7 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-*.json
+*.postman_collection.json
 
 # mkdocs documentation
 /site

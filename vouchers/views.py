@@ -1,68 +1,104 @@
-from django.shortcuts import render
 from rest_framework import generics
 from .models import Voucher, VoucherAvailability, TimeSlot
 from .serializers import VoucherSerializer, VoucherAvailabilitySerializer, TimeSlotSerializer, VoucherCreateSerializer
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 
 class VoucherListCreateView(generics.ListCreateAPIView):
-    queryset = Voucher.objects.all()
     serializer_class = VoucherSerializer
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Voucher.objects.all()
+        return Voucher.objects.filter(created_by=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
 
 class VoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Voucher.objects.all()
     serializer_class = VoucherSerializer
+    permission_classes = [IsAuthenticated]
 
-    def destroy(self, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": "Voucher deleted successfully"}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Voucher.objects.all()
+        return Voucher.objects.filter(created_by=self.request.user)
 
 class VoucherAvailabilityListCreateView(generics.ListCreateAPIView):
-    queryset = VoucherAvailability.objects.all()
     serializer_class = VoucherAvailabilitySerializer
 
     def get_queryset(self):
-        return VoucherAvailability.objects.filter(voucher_id=self.kwargs['voucher_id'])
+        voucher = Voucher.objects.get(id=self.kwargs['voucher_id'])
+
+        if voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to view availabilities for this voucher.")
+        return VoucherAvailability.objects.filter(voucher=voucher)
 
     def perform_create(self, serializer):
         voucher = Voucher.objects.get(id=self.kwargs['voucher_id'])
+        if voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to add availability to this voucher.")
         serializer.save(voucher=voucher)
 
+
 class VoucherAvailabilityDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VoucherAvailability.objects.all()
     serializer_class = VoucherAvailabilitySerializer
 
-    def destroy(self, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": "Voucher availability deleted successfully"}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        return VoucherAvailability.objects.filter(voucher__created_by=self.request.user)
 
+    def perform_update(self, serializer):
+        availability = self.get_object()
 
+        if availability.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to update availability for this voucher.")
+        
+        serializer.save()
 
+    def perform_destroy(self, instance):
+        if instance.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to delete availability for this voucher.")
+        
+        instance.delete()
 
 class TimeSlotListCreateView(generics.ListCreateAPIView):
     serializer_class = TimeSlotSerializer
 
     def get_queryset(self):
-        return TimeSlot.objects.filter(voucher_availability_id=self.kwargs['voucher_availability_id'])
+        availability = VoucherAvailability.objects.get(id=self.kwargs['voucher_availability_id'])
+
+        if availability.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to view or add time slots for this voucher.")
+
+        return TimeSlot.objects.filter(voucher_availability=availability)
 
     def perform_create(self, serializer):
-        voucher_availability = VoucherAvailability.objects.get(id=self.kwargs['voucher_availability_id'])
-        serializer.save(voucher_availability=voucher_availability)
+        availability = VoucherAvailability.objects.get(id=self.kwargs['voucher_availability_id'])
 
+        if availability.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to add time slots to this voucher.")
+
+        serializer.save(voucher_availability=availability)
 
 class TimeSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = TimeSlot.objects.all()
     serializer_class = TimeSlotSerializer
+    queryset = TimeSlot.objects.all()
 
+    def perform_update(self, serializer):
+        time_slot = self.get_object()
 
+        if time_slot.voucher_availability.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to update time slots for this voucher.")
+        serializer.save()
 
-
-# make a new api (class)
-# which will inherit both of above classes than add its url to urls.py
-
+    def perform_destroy(self, instance):
+        if instance.voucher_availability.voucher.created_by != self.request.user:
+            raise PermissionDenied("You do not have permission to delete time slots for this voucher.")
+        
+        instance.delete()
 
 class VoucherNestedCreateView(generics.CreateAPIView):
     queryset = Voucher.objects.all()
     serializer_class = VoucherCreateSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)

@@ -3,8 +3,9 @@ from .models import Voucher, VoucherAvailability, TimeSlot
 
 @admin.register(Voucher)
 class VoucherAdmin(admin.ModelAdmin):
-    list_display = ['name', 'voucher_code', 'discount_type', 'start_date', 'end_date']
-    #  'standalone_voucher'
+    list_display = ['name', 'voucher_code', 'discount_value', 'start_date', 'end_date', 'created_by']
+    list_filter = ('discount_type', 'birthday_members_only')
+    search_fields = ('name', 'voucher_code', 'created_by__email')
 
 @admin.register(VoucherAvailability)
 class VoucherAvailabilityAdmin(admin.ModelAdmin):
