@@ -15,7 +15,6 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            print('===serializer', user)
             refresh = RefreshToken.for_user(user)
             
             return Response(
