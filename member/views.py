@@ -8,6 +8,7 @@ from vouchers.models import Voucher
 from vouchers.serializers import VoucherSerializer
 from rest_framework.exceptions import NotFound, PermissionDenied
 from .models import Member, MemberVoucherUsage
+from datetime import datetime
 
 class MemberListCreateView(generics.ListCreateAPIView):
     serializer_class = MemberSerializer
@@ -69,6 +70,7 @@ class MemberVouchersView(generics.GenericAPIView):
             return Response({"message": "This member has no vouchers allocated."}, status=status.HTTP_200_OK)
 
 
+
 class UseVoucherView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         member_id = request.data.get('member_id')
@@ -80,6 +82,13 @@ class UseVoucherView(generics.GenericAPIView):
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
         except Voucher.DoesNotExist:
             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
+        if voucher.birthday_members_only:
+            current_month = datetime.now().month
+            birthday_month = member.date_of_birth.month
+            if current_month != birthday_month:
+                return Response({
+                    "message": "You cannot use the voucher because this is not your birthday month."
+                }, status=status.HTTP_400_BAD_REQUEST)
         usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
         if usage_record.is_expired:
             return Response({"message": "Your voucher has expired."}, status=status.HTTP_400_BAD_REQUEST)
