@@ -28,15 +28,14 @@ class VoucherAvailabilityListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         voucher = Voucher.objects.get(id=self.kwargs['voucher_id'])
-
         if voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to view availabilities for this voucher.")
+            raise PermissionDenied("apka pas is voucher ko dekhny ki shakian nahi hy.")
         return VoucherAvailability.objects.filter(voucher=voucher)
 
     def perform_create(self, serializer):
         voucher = Voucher.objects.get(id=self.kwargs['voucher_id'])
         if voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to add availability to this voucher.")
+            raise PermissionDenied("apky pas is voucehr ki availabilities ko cherny ki taaqat nai ay.")
         serializer.save(voucher=voucher)
 
 
@@ -48,16 +47,13 @@ class VoucherAvailabilityDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         availability = self.get_object()
-
         if availability.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to update availability for this voucher.")
-        
+            raise PermissionDenied("apky pas is voucher ki update availability ka haqq nai ay.")
         serializer.save()
 
     def perform_destroy(self, instance):
         if instance.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to delete availability for this voucher.")
-        
+            raise PermissionDenied("bhai tu is voucher ki availability ko delete krny ka salahiyat nai ay :).")
         instance.delete()
 
 class TimeSlotListCreateView(generics.ListCreateAPIView):
@@ -65,18 +61,14 @@ class TimeSlotListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         availability = VoucherAvailability.objects.get(id=self.kwargs['voucher_availability_id'])
-
         if availability.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to view or add time slots for this voucher.")
-
+            raise PermissionDenied("bhai nai kr skty ap time add jaan choro.")
         return TimeSlot.objects.filter(voucher_availability=availability)
 
     def perform_create(self, serializer):
         availability = VoucherAvailability.objects.get(id=self.kwargs['voucher_availability_id'])
-
         if availability.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to add time slots to this voucher.")
-
+            raise PermissionDenied("ap timeslot bhi add nai kr skty.")
         serializer.save(voucher_availability=availability)
 
 class TimeSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -85,15 +77,12 @@ class TimeSlotDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         time_slot = self.get_object()
-
         if time_slot.voucher_availability.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to update time slots for this voucher.")
+            raise PermissionDenied("ap slot update nai kr skty.")
         serializer.save()
-
     def perform_destroy(self, instance):
         if instance.voucher_availability.voucher.created_by != self.request.user:
-            raise PermissionDenied("You do not have permission to delete time slots for this voucher.")
-        
+            raise PermissionDenied("ap timeslot delete krna ki salahiayat nahi rkty maazrat bbhai jaan.")
         instance.delete()
 
 class VoucherNestedCreateView(generics.CreateAPIView):

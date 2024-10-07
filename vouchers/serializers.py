@@ -3,16 +3,16 @@ from .models import Voucher, VoucherAvailability, TimeSlot
 from member.models import Member
 
 class VoucherSerializer(serializers.ModelSerializer):
-    member = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Member.objects.all(), required=False
-    )
+    # member = serializers.PrimaryKeyRelatedField(
+    #     many=True, queryset=Member.objects.all(), required=False
+    # )
     class Meta:
         model = Voucher
         fields = [
             'id', 
             'name', 'description', 'voucher_code', 'discount_type', 'discount_value',
             'start_date', 'end_date', 'minimum_spending', 'maximum_usability_of_voucher',
-            'birthday_members_only', 'member', 
+            'birthday_members_only', #'member', 
         ]
 
 class TimeSlotSerializer(serializers.ModelSerializer):
