@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from vouchers.models import Voucher
 
 class Member(models.Model):
     first_name = models.CharField(max_length=100, null=False, blank=False)
@@ -46,3 +47,16 @@ class Member(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+
+
+class MemberVoucherUsage(models.Model):
+    member = models.ForeignKey('Member', on_delete=models.CASCADE)
+    voucher = models.ForeignKey(Voucher, on_delete=models.CASCADE)
+    usage_count = models.IntegerField(default=0)  # Tracks how many times the voucher has been used by this member
+    is_expired = models.BooleanField(default=False)  # To track if the voucher has expired for this member
+
+    class Meta:
+        unique_together = ('member', 'voucher')  # Ensures that a member can only have one usage record per voucher
+
+    def __str__(self):
+        return f"{self.member} - {self.voucher} - Usage: {self.usage_count}"
