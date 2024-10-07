@@ -22,8 +22,6 @@ class MemberDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Member.objects.all()
         return Member.objects.filter(created_by=self.request.user)
 
     def check_object_permissions(self, request, obj):

@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('marketing_email_notifications', models.BooleanField(default=True)),
                 ('marketing_text_notifications', models.BooleanField(default=True)),
                 ('preferred_language', models.CharField(choices=[('english', 'English'), ('arabic', 'Arabic'), ('urdu', 'Urdu'), ('faarsi', 'Faarsi'), ('python', 'Python')], default='faarsi', max_length=20)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='member', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-#member information
 class Member(models.Model):
     first_name = models.CharField(max_length=100, null=False, blank=False)
     last_name = models.CharField(max_length=100, null=False, blank=False)
@@ -23,7 +22,7 @@ class Member(models.Model):
     
     address = models.TextField(max_length=250, null=False, blank=False)
 
-#notifications
+# notifications
     receive_notifications = models.BooleanField(default=True)
     marketing_email_notifications = models.BooleanField(default=True)
     marketing_text_notifications = models.BooleanField(default=True)
@@ -37,8 +36,13 @@ class Member(models.Model):
     ]
     preferred_language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='faarsi')
 
-#to link this with useraccounts user app
+# to link this with useraccounts user app
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='member', on_delete=models.CASCADE)
+
+ # so by this i can create many-to-many relatioships between apps(user and vouchers)
+    vouchers = models.ManyToManyField('vouchers.Voucher', related_name='member', blank=True)
+
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
