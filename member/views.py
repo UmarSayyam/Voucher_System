@@ -7,8 +7,15 @@ from rest_framework.permissions import IsAuthenticated
 from vouchers.models import Voucher
 from vouchers.serializers import VoucherSerializer
 from rest_framework.exceptions import NotFound, PermissionDenied
-from .models import Member, MemberVoucherUsage
+from .models import Member, MemberVoucherUsage, Voucher
 from datetime import datetime
+from django.shortcuts import render
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.shortcuts import get_object_or_404
+
+def voucher_notification(request):
+    return render(request, 'member/voucher_notification.html')
 
 class MemberListCreateView(generics.ListCreateAPIView):
     serializer_class = MemberSerializer
@@ -71,35 +78,70 @@ class MemberVouchersView(generics.GenericAPIView):
 
 
 
+
 class UseVoucherView(generics.GenericAPIView):
+
     def post(self, request, *args, **kwargs):
         member_id = request.data.get('member_id')
         voucher_id = request.data.get('voucher_id')
+
         try:
             member = Member.objects.get(id=member_id)
             voucher = Voucher.objects.get(id=voucher_id)
+
         except Member.DoesNotExist:
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         except Voucher.DoesNotExist:
             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         if voucher.birthday_members_only:
             current_month = datetime.now().month
             birthday_month = member.date_of_birth.month
+
             if current_month != birthday_month:
                 return Response({
                     "message": "You cannot use the voucher because this is not your birthday month."
                 }, status=status.HTTP_400_BAD_REQUEST)
+            
         usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
+
         if usage_record.is_expired:
             return Response({"message": "Your voucher has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        
         usage_record.usage_count += 1
+
         if usage_record.usage_count >= voucher.maximum_usability_of_voucher:
             usage_record.is_expired = True
             usage_record.save()
+
+            # Trigger WebSocket notification for expired voucher
+            self.trigger_websocket_notification(f"Your voucher has expired.")
             return Response({"message": "Your voucher has expired."}, status=status.HTTP_200_OK)
+        
         else:
             usage_record.save()
             remaining_uses = voucher.maximum_usability_of_voucher - usage_record.usage_count
+            
+            # Trigger WebSocket notification for successful usage
+            self.trigger_websocket_notification(f"Voucher used successfully. You have {remaining_uses} uses remaining.")
+
             return Response({
                 "message": f"Voucher used successfully. You have {remaining_uses} uses remaining."
             }, status=status.HTTP_200_OK)
+        
+
+
+    # Method to trigger WebSocket notification
+    def trigger_websocket_notification(self, message):
+        print(f"WebSocket message: {message}")  # Debugging
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "voucher_group",  # WebSocket group name
+            {
+                "type": "send_voucher_message",  # Type corresponds to the method in the consumer
+                "message": message
+            }
+        )
+
+

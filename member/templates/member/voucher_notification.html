@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Notification</title>
+</head>
+<body>
+    <h1>Real-time Voucher Notification</h1>
+
+    <!-- This will display the real-time message -->
+    <div id="notification"></div>
+
+    <script>
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/voucher/');
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const notificationDiv = document.getElementById('notification');
+
+            // Display the message in the div
+            notificationDiv.innerHTML = `<p>${data.message}</p>`;
+        };
+
+        // On WebSocket open (connection established)
+        socket.onopen = function() {
+            console.log("WebSocket connection established");
+        };
+
+        // On WebSocket error
+        socket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+
+        // On WebSocket close
+        socket.onclose = function() {
+            console.log("WebSocket connection closed");
+        };
+    </script>
+</body>
+</html>
