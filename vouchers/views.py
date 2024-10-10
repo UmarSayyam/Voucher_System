@@ -92,6 +92,3 @@ class VoucherNestedCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-
-# funtion base / class base
-# member voucher apply
