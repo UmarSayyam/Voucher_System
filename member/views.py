@@ -79,13 +79,168 @@ class MemberVouchersView(generics.GenericAPIView):
 
 
 
+# class UseVoucherView(generics.GenericAPIView):
+
+#     def post(self, request, *args, **kwargs):
+#         member_id = request.data.get('member_id')
+#         voucher_id = request.data.get('voucher_id')
+
+#         try:
+#             member = Member.objects.get(id=member_id)
+#             voucher = Voucher.objects.get(id=voucher_id)
+
+#         except Member.DoesNotExist:
+#             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         except Voucher.DoesNotExist:
+#             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         if voucher.birthday_members_only:
+#             current_month = datetime.now().month
+#             birthday_month = member.date_of_birth.month
+
+#             if current_month != birthday_month:
+#                 return Response({
+#                     "message": "You cannot use the voucher because this is not your birthday month."
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+            
+#         usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
+
+#         if usage_record.is_expired:
+#             return Response({"message": "Your voucher has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        
+#         usage_record.usage_count += 1
+
+#         if usage_record.usage_count >= voucher.maximum_usability_of_voucher:
+#             usage_record.is_expired = True
+#             usage_record.save()
+
+#             # Trigger WebSocket notification for expired voucher
+#             self.trigger_websocket_notification(f"Your voucher has expired.")
+#             return Response({"message": "Your voucher has expired."}, status=status.HTTP_200_OK)
+        
+#         else:
+#             usage_record.save()
+#             remaining_uses = voucher.maximum_usability_of_voucher - usage_record.usage_count
+            
+#             # Trigger WebSocket notification for successful usage
+#             self.trigger_websocket_notification(f"Voucher used successfully. You have {remaining_uses} uses remaining.")
+
+#             return Response({
+#                 "message": f"Voucher used successfully. You have {remaining_uses} uses remaining."
+#             }, status=status.HTTP_200_OK)
+        
+
+
+#     # Method to trigger WebSocket notification
+#     def trigger_websocket_notification(self, message):
+#         print(f"WebSocket message: {message}")  # Debugging
+#         channel_layer = get_channel_layer()
+#         async_to_sync(channel_layer.group_send)(
+#             "voucher_group",  # WebSocket group name
+#             {
+#                 "type": "send_voucher_message",  # Type corresponds to the method in the consumer
+#                 "message": message
+#             }
+#         )
+
+
+
+
+
+# class UseVoucherView(generics.GenericAPIView):
+#     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+#     def post(self, request, *args, **kwargs):
+#         member_id = request.data.get('member_id')
+#         voucher_id = request.data.get('voucher_id')
+
+#         try:
+#             # Fetch the member and voucher
+#             member = Member.objects.get(id=member_id)
+#             voucher = Voucher.objects.get(id=voucher_id)
+
+#         except Member.DoesNotExist:
+#             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         except Voucher.DoesNotExist:
+#             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
+
+#         # Check if the authenticated user is the creator of the member
+#         if request.user != member.created_by:
+#             message = "You do not have permission to use this voucher for this member."
+#             self.trigger_websocket_notification(message)  # Trigger WebSocket notification for permission denied
+#             raise PermissionDenied(message)
+#         # (Optional) Check if the user is the creator of the voucher
+#         # if request.user != voucher.created_by:
+#         #     raise PermissionDenied("You do not have permission to use this voucher.")
+
+#         # Birthday month check
+#         if voucher.birthday_members_only:
+#             current_month = datetime.now().month
+#             birthday_month = member.date_of_birth.month
+
+#             if current_month != birthday_month:
+#                 return Response({
+#                     "message": "You cannot use the voucher because this is not your birthday month."
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+        
+#         # Handle voucher usage and expiry
+#         usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
+
+#         if usage_record.is_expired:
+#             return Response({"message": "Your voucher has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        
+#         usage_record.usage_count += 1
+
+#         if usage_record.usage_count >= voucher.maximum_usability_of_voucher:
+#             usage_record.is_expired = True
+#             usage_record.save()
+
+#             # Trigger WebSocket notification for expired voucher
+#             self.trigger_websocket_notification(f"Your voucher has expired.")
+#             return Response({"message": "Your voucher has expired."}, status=status.HTTP_200_OK)
+        
+#         else:
+#             usage_record.save()
+#             remaining_uses = voucher.maximum_usability_of_voucher - usage_record.usage_count
+            
+#             # Trigger WebSocket notification for successful usage
+#             self.trigger_websocket_notification(f"Voucher used successfully. You have {remaining_uses} uses remaining.")
+
+#             return Response({
+#                 "message": f"Voucher used successfully. You have {remaining_uses} uses remaining."
+#             }, status=status.HTTP_200_OK)
+        
+
+#     # Method to trigger WebSocket notification
+#     def trigger_websocket_notification(self, message):
+#         print(f"WebSocket message: {message}")  # Debugging
+#         channel_layer = get_channel_layer()
+#         async_to_sync(channel_layer.group_send)(
+#             "voucher_group",  # WebSocket group name
+#             {
+#                 "type": "send_voucher_message",  # Type corresponds to the method in the consumer
+#                 "message": message
+#             }
+#         )
+
+
+
+
+
+
+
+
 class UseVoucherView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
     def post(self, request, *args, **kwargs):
         member_id = request.data.get('member_id')
         voucher_id = request.data.get('voucher_id')
 
         try:
+            # Fetch the member and voucher
             member = Member.objects.get(id=member_id)
             voucher = Voucher.objects.get(id=voucher_id)
 
@@ -93,44 +248,66 @@ class UseVoucherView(generics.GenericAPIView):
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
         
         except Voucher.DoesNotExist:
+            self.trigger_websocket_notification('Voucher not found')  # Send WebSocket notification
             return Response({"error": "Voucher not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        if voucher.birthday_members_only:
-            current_month = datetime.now().month
-            birthday_month = member.date_of_birth.month
 
-            if current_month != birthday_month:
+        try:
+            # Check if the authenticated user is the creator of the member
+            if request.user != member.created_by:
+                message = "You do not have permission to use this voucher for this member."
+                self.trigger_websocket_notification(message)  # Send WebSocket notification
+                raise PermissionDenied(message)
+        
+            # (Optional) Check if the user is the creator of the voucher
+            # if request.user != voucher.created_by:
+            #     message = "You do not have permission to use this voucher."
+            #     self.trigger_websocket_notification(message)  # Trigger WebSocket notification for permission denied
+            #     raise PermissionDenied(message)
+
+            # Birthday month check
+            if voucher.birthday_members_only:
+                current_month = datetime.now().month
+                birthday_month = member.date_of_birth.month
+
+                if current_month != birthday_month:
+                    message = "You cannot use the voucher because this is not your birthday month."
+                    self.trigger_websocket_notification(message)  # Trigger WebSocket notification
+                    return Response({"message": message}, status=status.HTTP_400_BAD_REQUEST)
+        
+            # Handle voucher usage and expiry
+            usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
+
+            if usage_record.is_expired:
+                message = "Your voucher has expired."
+                self.trigger_websocket_notification(message)  # Trigger WebSocket notification for expired voucher
+                return Response({"message": message}, status=status.HTTP_400_BAD_REQUEST)
+            
+            usage_record.usage_count += 1
+
+            if usage_record.usage_count >= voucher.maximum_usability_of_voucher:
+                usage_record.is_expired = True
+                usage_record.save()
+
+                message = "Your voucher has expired."
+                self.trigger_websocket_notification(message)  # Trigger WebSocket notification for expired voucher
+                return Response({"message": message}, status=status.HTTP_200_OK)
+            
+            else:
+                usage_record.save()
+                remaining_uses = voucher.maximum_usability_of_voucher - usage_record.usage_count
+                
+                message = f"Voucher used successfully. You have {remaining_uses} uses remaining."
+                self.trigger_websocket_notification(message)  # Trigger WebSocket notification for successful usage
+
                 return Response({
-                    "message": "You cannot use the voucher because this is not your birthday month."
-                }, status=status.HTTP_400_BAD_REQUEST)
-            
-        usage_record, created = MemberVoucherUsage.objects.get_or_create(member=member, voucher=voucher)
+                    "message": message
+                }, status=status.HTTP_200_OK)
 
-        if usage_record.is_expired:
-            return Response({"message": "Your voucher has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        except PermissionDenied as e:
+            # Send WebSocket notification before raising PermissionDenied error
+            self.trigger_websocket_notification(str(e))
+            raise  # Re-raise the exception after sending the WebSocket message
         
-        usage_record.usage_count += 1
-
-        if usage_record.usage_count >= voucher.maximum_usability_of_voucher:
-            usage_record.is_expired = True
-            usage_record.save()
-
-            # Trigger WebSocket notification for expired voucher
-            self.trigger_websocket_notification(f"Your voucher has expired.")
-            return Response({"message": "Your voucher has expired."}, status=status.HTTP_200_OK)
-        
-        else:
-            usage_record.save()
-            remaining_uses = voucher.maximum_usability_of_voucher - usage_record.usage_count
-            
-            # Trigger WebSocket notification for successful usage
-            self.trigger_websocket_notification(f"Voucher used successfully. You have {remaining_uses} uses remaining.")
-
-            return Response({
-                "message": f"Voucher used successfully. You have {remaining_uses} uses remaining."
-            }, status=status.HTTP_200_OK)
-        
-
 
     # Method to trigger WebSocket notification
     def trigger_websocket_notification(self, message):
@@ -143,5 +320,3 @@ class UseVoucherView(generics.GenericAPIView):
                 "message": message
             }
         )
-
-
