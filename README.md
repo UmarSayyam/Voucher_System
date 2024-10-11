@@ -15,8 +15,8 @@ This is a Django-based voucher management system designed for managing and assig
 - **Backend**: Django, Django REST Framework
 - **Real-Time**: Django Channels, WebSockets
 - **Authentication**: JWT (JSON Web Token)
-- **Database**: SQLite
-
+- **Database**: SQLite, Postgres
+ 
 ## Installation
 
 ### Prerequisites
