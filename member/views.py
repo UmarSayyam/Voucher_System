@@ -99,12 +99,6 @@ class UseVoucherView(generics.GenericAPIView):
                 message = "You do not have permission to use this voucher for this member."
                 self.trigger_websocket_notification(message)  # Send WebSocket notification
                 raise PermissionDenied(message)
-        
-            # (Optional) Check if the user is the creator of the voucher
-            # if request.user != voucher.created_by:
-            #     message = "You do not have permission to use this voucher."
-            #     self.trigger_websocket_notification(message)  # Trigger WebSocket notification for permission denied
-            #     raise PermissionDenied(message)
 
             # Birthday month check
             if voucher.birthday_members_only:

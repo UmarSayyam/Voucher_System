@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/media/img/favicon.ico" />
+
+    <title>Register | OpenSource Project</title>
+    {% comment %} <title>Register / Login</title> {% endcomment %}
+    {% comment %} <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon"> {% endcomment %}
+
+    <!-- Lottie Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Header Styles */
+        .header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #6e8efb;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #6e8efb;
+        }
+
+        /* Main Container */
+        .container {
+            width: 500px;
+            background-color: #fff;
+            padding: 30px;
+            margin: 150px auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 95%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6e8efb;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #a777e3;
+        }
+
+        .login-btn {
+            margin-top: 10px;
+            background-color: transparent;
+            color: #6e8efb;
+            text-decoration: underline;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Pizza Shop Animations */
+        .shop {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .left-shop {
+            top: 30%;
+            left: -200px;
+            animation: moveLeft 5s linear infinite;
+        }
+
+        .right-shop {
+            top: 30%;
+            right: -200px;
+            animation: moveRight 5s linear infinite;
+        }
+
+        @keyframes moveLeft {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(300px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes moveRight {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-300px); }
+            100% { transform: translateX(0); }
+        }
+
+        .banner {
+            background-color: #ffcc00;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin: 120px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header with Navigation Links -->
+    <div class="header">
+        <h1 onclick="window.location.href='/'">OpenSourceProject</h1>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="#location">Location</a></li>
+            <li><a href="#info">Info</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#chat">Chat Support</a></li>
+        </ul>
+    </div>
+
+    <!-- Left Pizza Shop -->
+    <div class="shop left-shop">
+        <div class="banner">What are you waiting for?</div>
+        <div id="left-pizza-shop"></div>
+    </div>
+
+    <!-- Right Pizza Shop -->
+    <div class="shop right-shop">
+        <div class="banner">Signup nowwww!</div>
+        <div id="right-pizza-shop"></div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="container">
+        <h2>Create an Account</h2>
+        <form method="POST" action="{% url 'auth_page' %}">
+            {% csrf_token %}
+            <input type="text" name="first_name" placeholder="First Name" required />
+            <input type="text" name="last_name" placeholder="Last Name" />
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" required minlength="8" />
+            <input type="text" name="company_name" placeholder="Company Name" required />
+            <input type="text" name="phone_number" placeholder="Phone Number" required />
+            <input type="text" name="country" placeholder="Country" required />
+            <input type="text" name="state" placeholder="State" required />
+            <input type="text" name="city" placeholder="City" required />
+            <button type="submit">Register</button>
+        </form>
+
+        <button class="login-btn" onclick="window.location.href='{% url 'login' %}'">
+            Already have an account? Login
+        </button>
+    </div>
+
+    <script>
+        // Load Lottie animations for both pizza shops
+        lottie.loadAnimation({
+            container: document.getElementById('left-pizza-shop'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets10.lottiefiles.com/packages/lf20_q5pk6p1k.json' // Example JSON for left shop
+        });
+
+        lottie.loadAnimation({
+            container: document.getElementById('right-pizza-shop'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets10.lottiefiles.com/packages/lf20_q5pk6p1k.json' // Example JSON for right shop
+        });
+    </script>
+
+</body>
+</html>

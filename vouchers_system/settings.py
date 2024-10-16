@@ -126,12 +126,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -171,12 +165,27 @@ SIMPLE_JWT = {
 
 
 
+# # Static files (CSS, JavaScript, Images)
+# # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
+# STATIC_URL = 'static/'
+# STATICFILES_DIRS = [BASE_DIR / 'static']
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+# # Static files (CSS, JavaScript, Images)
+# # https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+# STATIC_URL = 'static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+
+
+STATIC_URL = '/static/'
+
+# Add this directory to serve additional static files.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Ensure this path points to the 'static' directory
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For 'collectstatic' command
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
